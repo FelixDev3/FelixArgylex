@@ -1,0 +1,378 @@
+
+
+local ScreenGui = Instance.new("ScreenGui")
+local Main = Instance.new("Frame")
+local Label = Instance.new("TextLabel")
+local InfiniteAmmo = Instance.new("TextButton")
+local KillAll = Instance.new("TextButton")
+local InfiniteYield = Instance.new("TextButton")
+local ClickTeleport = Instance.new("TextButton")
+local Settings = Instance.new("TextButton")
+local CMDX = Instance.new("TextButton")
+
+--Properties:
+
+ScreenGui.Parent = game.CoreGui
+
+Main.Name = "Main"
+Main.Parent = ScreenGui
+Main.BackgroundColor3 = Color3.fromRGB(77, 77, 77)
+Main.BorderColor3 = Color3.fromRGB(140, 175, 255)
+Main.BorderSizePixel = 5
+Main.Position = UDim2.new(0.303777963, 0, 0.344753742, 0)
+Main.Size = UDim2.new(0, 544, 0, 278)
+Main.Active = true
+Main.Draggable = true
+
+Label.Name = "Label"
+Label.Parent = Main
+Label.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Label.BorderColor3 = Color3.fromRGB(0, 255, 255)
+Label.Position = UDim2.new(0.0165441185, 0, 0.0251798555, 0)
+Label.Size = UDim2.new(0, 528, 0, 50)
+Label.Font = Enum.Font.SciFi
+Label.Text = "Naval Warfare GUI | Made by FelixArgylex & Lonelyman12826"
+Label.TextColor3 = Color3.fromRGB(0, 0, 0)
+Label.TextSize = 20.000
+
+InfiniteAmmo.Name = "InfiniteAmmo"
+InfiniteAmmo.Parent = Main
+InfiniteAmmo.BackgroundColor3 = Color3.fromRGB(167, 167, 167)
+InfiniteAmmo.Position = UDim2.new(0.0422794148, 0, 0.266187042, 0)
+InfiniteAmmo.Size = UDim2.new(0, 140, 0, 76)
+InfiniteAmmo.Font = Enum.Font.SciFi
+InfiniteAmmo.Text = "Infnite Ammo"
+InfiniteAmmo.TextColor3 = Color3.fromRGB(0, 0, 0)
+InfiniteAmmo.TextSize = 25.000
+InfiniteAmmo.MouseButton1Down:connect(function()
+	function AvoidCrasher(Fenv, F)
+		for i, v in pairs(Fenv) do
+			if i == "script" and typeof(v) == "Instance" and v.ClassName == F.ClassName and F == v then
+				return true
+			end
+		end
+		return false
+	end
+	function LoopThroughTable(Tab, F, LookThrough)
+		for i, v in pairs(LookThrough) do
+			if typeof(v) == "function" and islclosure(v) and getfenv(v) and AvoidCrasher(getfenv(v), F) then
+				table.insert(Tab, v)
+			end
+		end
+	end
+	function GetFunctionsFromScript(F)
+		local functionstab = {}
+		LoopThroughTable(functionstab, F, getgc())
+		LoopThroughTable(functionstab, F, debug.getregistry())
+		return functionstab
+	end
+	function ChangeAmmoGun(Gun)
+		if not Gun:FindFirstChild("TriggerScript") then return end
+		local T = GetFunctionsFromScript(Gun.TriggerScript)
+		for i, v in pairs(GetFunctionsFromScript(Gun.TriggerScript)) do
+			if table.find(debug.getconstants(v), "Reloading...") then
+				if typeof(debug.getupvalue(v, 3)) ~= "number" then
+					debug.setupvalue(v, 4, 99999999)
+				else
+					hookfunction(v, function() end)
+				end
+			elseif table.find(debug.getconstants(T[i]), "Ray") then
+				debug.setconstant(T[i], 9, 999999999)
+			end
+		end
+	end
+	for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+		ChangeAmmoGun(v)
+	end
+	game.Players.LocalPlayer.CharacterAdded:connect(function()
+		repeat
+			wait()
+		until game.Players.LocalPlayer:FindFirstChild("Backpack") and #game.Players.LocalPlayer.Backpack:GetChildren() > 0
+		for i, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+			ChangeAmmoGun(v)
+		end
+	end)
+end)
+
+KillAll.Name = "KillAll"
+KillAll.Parent = Main
+KillAll.BackgroundColor3 = Color3.fromRGB(167, 167, 167)
+KillAll.Position = UDim2.new(0.707720637, 0, 0.266187042, 0)
+KillAll.Size = UDim2.new(0, 140, 0, 76)
+KillAll.Font = Enum.Font.SciFi
+KillAll.Text = "Kill All"
+KillAll.TextColor3 = Color3.fromRGB(0, 0, 0)
+KillAll.TextSize = 25.000
+KillAll.MouseButton1Down:connect(function()
+	while true do
+		wait(0.3) 
+
+		
+		for i, v in pairs(game.Workspace:GetChildren()) do
+			if v.Name ~= game.Players.LocalPlayer.Name then
+				if v:FindFirstChild("Humanoid") then
+
+					
+					local victimplayers = game.Players:GetPlayerFromCharacter(v)
+					if victimplayers.TeamColor ~= game.Players.LocalPlayer.TeamColor then
+
+						
+						local Event = game:GetService("ReplicatedStorage").Event
+						Event:FireServer(
+							"shootRifle",
+							"",
+							{
+								v.Head
+							}
+
+						)
+						Event:FireServer(
+							"shootRifle",
+							"hit",
+							{
+								v.Humanoid
+
+							}
+
+						)
+					end
+				end
+			end
+		end
+	end
+end)
+
+InfiniteYield.Name = "InfiniteYield"
+InfiniteYield.Parent = Main
+InfiniteYield.BackgroundColor3 = Color3.fromRGB(167, 167, 167)
+InfiniteYield.Position = UDim2.new(0.145220593, 0, 0.651079118, 0)
+InfiniteYield.Size = UDim2.new(0, 140, 0, 76)
+InfiniteYield.Font = Enum.Font.SciFi
+InfiniteYield.Text = "Infinite Yield"
+InfiniteYield.TextColor3 = Color3.fromRGB(0, 0, 0)
+InfiniteYield.TextSize = 25.000
+InfiniteYield.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+end)
+
+ClickTeleport.Name = "ClickTeleport"
+ClickTeleport.Parent = Main
+ClickTeleport.BackgroundColor3 = Color3.fromRGB(167, 167, 167)
+ClickTeleport.Position = UDim2.new(0.351102948, 0, 0.266187012, 0)
+ClickTeleport.Size = UDim2.new(0, 140, 0, 76)
+ClickTeleport.Font = Enum.Font.SciFi
+ClickTeleport.Text = "Click To Teleport"
+ClickTeleport.TextColor3 = Color3.fromRGB(0, 0, 0)
+ClickTeleport.TextSize = 25.000
+ClickTeleport.MouseButton1Down:connect(function()
+	mouse = game.Players.LocalPlayer:GetMouse()
+	tool = Instance.new("Tool")
+	tool.RequiresHandle = false
+	tool.Name = "Click Teleport"
+	tool.Activated:connect(function()
+		local pos = mouse.Hit+Vector3.new(0,2.5,0)
+		pos = CFrame.new(pos.X,pos.Y,pos.Z)
+		game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = pos
+	end)
+	tool.Parent = game.Players.LocalPlayer.Backpack
+end)
+
+Settings.Name = "Settings"
+Settings.Parent = Main
+Settings.BackgroundColor3 = Color3.fromRGB(39, 50, 113)
+Settings.BorderColor3 = Color3.fromRGB(255, 255, 255)
+Settings.BorderSizePixel = 3
+Settings.Position = UDim2.new(0.891544104, 0, 0.852518022, 0)
+Settings.Size = UDim2.new(0, 40, 0, 32)
+Settings.Font = Enum.Font.SciFi
+Settings.Text = "Help"
+Settings.TextColor3 = Color3.fromRGB(255, 255, 255)
+Settings.TextSize = 14.000
+Settings.MouseButton1Down:connect(function()
+	local HelpGUI = Instance.new("ScreenGui")
+	local SettingMain = Instance.new("ScrollingFrame")
+	local Label = Instance.new("TextLabel")
+	local extraInformation = Instance.new("TextLabel")
+	local Information = Instance.new("TextLabel")
+	local Description = Instance.new("TextLabel")
+	local AmmoHelp = Instance.new("TextLabel")
+	local AmmoHelp_2 = Instance.new("TextLabel")
+	local KillAll = Instance.new("TextLabel")
+	local KillAllHelp = Instance.new("TextLabel")
+	local Close = Instance.new("TextButton")
+	local Descend = Instance.new("TextLabel")
+
+	--Properties:
+
+	HelpGUI.Name = "Help GUI"
+	HelpGUI.Parent = game.CoreGui
+
+	SettingMain.Name = "SettingMain"
+	SettingMain.Parent = HelpGUI
+	SettingMain.Active = true
+	SettingMain.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	SettingMain.BorderColor3 = Color3.fromRGB(140, 175, 255)
+	SettingMain.BorderSizePixel = 3
+	SettingMain.Position = UDim2.new(0.0622224733, 0, 0.367823541, 0)
+	SettingMain.Size = UDim2.new(0, 483, 0, 246)
+	SettingMain.Active = true
+	SettingMain.Draggable = true
+
+	Label.Name = "Label"
+	Label.Parent = SettingMain
+	Label.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+	Label.BorderColor3 = Color3.fromRGB(170, 255, 255)
+	Label.BorderSizePixel = 3
+	Label.Position = UDim2.new(0, 0, -0.000261880516, 0)
+	Label.Size = UDim2.new(0, 476, 0, 50)
+	Label.Font = Enum.Font.SciFi
+	Label.Text = "Guide For The Script"
+	Label.TextColor3 = Color3.fromRGB(0, 0, 0)
+	Label.TextSize = 40.000
+
+	extraInformation.Name = "extraInformation"
+	extraInformation.Parent = Label
+	extraInformation.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+	extraInformation.BorderColor3 = Color3.fromRGB(170, 255, 255)
+	extraInformation.BorderSizePixel = 3
+	extraInformation.Position = UDim2.new(0.045131132, 0, 2.43999982, 0)
+	extraInformation.Size = UDim2.new(0, 426, 0, 33)
+	extraInformation.Font = Enum.Font.SciFi
+	extraInformation.Text = "This GUI script is also my first script to be made.."
+	extraInformation.TextColor3 = Color3.fromRGB(0, 0, 0)
+	extraInformation.TextSize = 14.000
+
+	Information.Name = "Information"
+	Information.Parent = Label
+	Information.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+	Information.BorderColor3 = Color3.fromRGB(170, 255, 255)
+	Information.BorderSizePixel = 3
+	Information.Position = UDim2.new(0.0451311246, 0, 1.71999991, 0)
+	Information.Size = UDim2.new(0, 426, 0, 37)
+	Information.Font = Enum.Font.SciFi
+	Information.Text = "GUI is made by FelixArgylex and Lonelyman12826"
+	Information.TextColor3 = Color3.fromRGB(0, 0, 0)
+	Information.TextSize = 20.000
+
+	Description.Name = "Description"
+	Description.Parent = Label
+	Description.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+	Description.BorderColor3 = Color3.fromRGB(170, 255, 255)
+	Description.BorderSizePixel = 3
+	Description.Position = UDim2.new(0.0451311246, 0, 3.10000014, 0)
+	Description.Size = UDim2.new(0, 426, 0, 78)
+	Description.Font = Enum.Font.SciFi
+	Description.Text = "This is a Guide for Commands and to how to use the GUI, Also im stil fixing errors or adding stuff, i hope you enjoy my GUI :D"
+	Description.TextColor3 = Color3.fromRGB(0, 0, 0)
+	Description.TextSize = 18.000
+	Description.TextWrapped = true
+	Description.TextXAlignment = Enum.TextXAlignment.Left
+	Description.TextYAlignment = Enum.TextYAlignment.Top
+
+	AmmoHelp.Name = "AmmoHelp"
+	AmmoHelp.Parent = SettingMain
+	AmmoHelp.BackgroundColor3 = Color3.fromRGB(221, 221, 221)
+	AmmoHelp.BorderColor3 = Color3.fromRGB(140, 175, 255)
+	AmmoHelp.BorderSizePixel = 3
+	AmmoHelp.Position = UDim2.new(0.0517598391, 0, 0.195317805, 0)
+	AmmoHelp.Size = UDim2.new(0, 103, 0, 54)
+	AmmoHelp.Font = Enum.Font.SciFi
+	AmmoHelp.Text = "Infinite Ammo"
+	AmmoHelp.TextColor3 = Color3.fromRGB(0, 0, 0)
+	AmmoHelp.TextSize = 18.000
+
+	AmmoHelp_2.Name = "AmmoHelp"
+	AmmoHelp_2.Parent = AmmoHelp
+	AmmoHelp_2.BackgroundColor3 = Color3.fromRGB(221, 221, 221)
+	AmmoHelp_2.BorderColor3 = Color3.fromRGB(140, 175, 255)
+	AmmoHelp_2.BorderSizePixel = 3
+	AmmoHelp_2.Position = UDim2.new(1.18225515, 0, -0.00745420111, 0)
+	AmmoHelp_2.Size = UDim2.new(0, 307, 0, 122)
+	AmmoHelp_2.Font = Enum.Font.SciFi
+	AmmoHelp_2.Text = "How to use this function?, why its not working?, first of al you're not gonna EQUIP the M1 grand when clicking the button, if its still not working just shoot once in a random place and it should be working fine TIP: you can also get an autoclicker and you will turn into an A-10 Warthog"
+	AmmoHelp_2.TextColor3 = Color3.fromRGB(0, 0, 0)
+	AmmoHelp_2.TextScaled = true
+	AmmoHelp_2.TextSize = 18.000
+	AmmoHelp_2.TextWrapped = true
+	AmmoHelp_2.TextXAlignment = Enum.TextXAlignment.Left
+	AmmoHelp_2.TextYAlignment = Enum.TextYAlignment.Top
+
+	KillAll.Name = "KillAll"
+	KillAll.Parent = SettingMain
+	KillAll.BackgroundColor3 = Color3.fromRGB(221, 221, 221)
+	KillAll.BorderColor3 = Color3.fromRGB(140, 175, 255)
+	KillAll.BorderSizePixel = 3
+	KillAll.Position = UDim2.new(0.0517598391, 0, 0.276366681, 0)
+	KillAll.Size = UDim2.new(0, 103, 0, 54)
+	KillAll.Font = Enum.Font.SciFi
+	KillAll.Text = "Kill All"
+	KillAll.TextColor3 = Color3.fromRGB(0, 0, 0)
+	KillAll.TextSize = 18.000
+
+	KillAllHelp.Name = "KillAllHelp"
+	KillAllHelp.Parent = KillAll
+	KillAllHelp.BackgroundColor3 = Color3.fromRGB(221, 221, 221)
+	KillAllHelp.BorderColor3 = Color3.fromRGB(140, 175, 255)
+	KillAllHelp.BorderSizePixel = 3
+	KillAllHelp.Position = UDim2.new(1.18225515, 0, -0.00745420111, 0)
+	KillAllHelp.Size = UDim2.new(0, 307, 0, 122)
+	KillAllHelp.Font = Enum.Font.SciFi
+	KillAllHelp.Text = "How to use this function?, you have to click it and shoot near where the enemy is, also if you die just click the button again and it should be working fine, you can use this with infinite ammo "
+	KillAllHelp.TextColor3 = Color3.fromRGB(0, 0, 0)
+	KillAllHelp.TextScaled = true
+	KillAllHelp.TextSize = 18.000
+	KillAllHelp.TextWrapped = true
+	KillAllHelp.TextXAlignment = Enum.TextXAlignment.Left
+	KillAllHelp.TextYAlignment = Enum.TextYAlignment.Top
+
+	Close.Name = "Close"
+	Close.Parent = SettingMain
+	Close.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+	Close.BorderColor3 = Color3.fromRGB(170, 255, 255)
+	Close.BorderSizePixel = 0
+	Close.Position = UDim2.new(0.853200614, 0, 0, 0)
+	Close.Size = UDim2.new(0, 58, 0, 50)
+	Close.Font = Enum.Font.SciFi
+	Close.Text = "X"
+	Close.TextColor3 = Color3.fromRGB(0, 0, 0)
+	Close.TextSize = 14.000
+
+	Descend.Name = "Desc end"
+	Descend.Parent = SettingMain
+	Descend.BackgroundColor3 = Color3.fromRGB(221, 221, 221)
+	Descend.BorderColor3 = Color3.fromRGB(140, 175, 255)
+	Descend.BorderSizePixel = 3
+	Descend.Position = UDim2.new(-0.000421559584, 0, 0.36918059, 0)
+	Descend.Size = UDim2.new(0, 471, 0, 76)
+	Descend.Font = Enum.Font.SciFi
+	Descend.Text = "Thats all , im too lazy to put more of the function buttons i made for the GUI, anyaways have fun using this GUI :]"
+	Descend.TextColor3 = Color3.fromRGB(0, 0, 0)
+	Descend.TextScaled = true
+	Descend.TextSize = 14.000
+	Descend.TextWrapped = true
+	Descend.TextYAlignment = Enum.TextYAlignment.Top
+
+	-- Scripts:
+
+	local function DVRUIT_fake_script() -- Close.Close Localscript 
+		local script = Instance.new('LocalScript', Close)
+
+		script.Parent.MouseButton1Down:Connect (function()
+			script.Parent.Parent.Visible = false
+		end)
+	end
+	coroutine.wrap(DVRUIT_fake_script)()
+
+end)
+CMDX.Name = "CMD-X"
+CMDX.Parent = Main
+CMDX.BackgroundColor3 = Color3.fromRGB(167, 167, 167)
+CMDX.Position = UDim2.new(0.560661793, 0, 0.651079118, 0)
+CMDX.Size = UDim2.new(0, 140, 0, 76)
+CMDX.Font = Enum.Font.SciFi
+CMDX.Text = "CMD-X"
+CMDX.TextColor3 = Color3.fromRGB(0, 0, 0)
+CMDX.TextSize = 25.000
+CMDX.MouseButton1Down:connect(function()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/CMD-X/CMD-X/master/Source", true))()
+end)
